@@ -1,8 +1,17 @@
 https://ansible-for-network-engineers.readthedocs.io/ru/latest/index.html
 
+Установка на RHEL дистрибутивы
 yum install epel-release
 yum install ansible
-cat > inventory
+
+Установка на Ubuntu
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+
+cat > inventory - не обязательно создавать Inventory-файл, так как по умолчанию он храится в /etc/ansible/hosts
+
 target1 ansible_host=192.168.0.160 ansible_ssh_pass=toor - ip и пароль рута хоста-цели
 
 ansible target1 -m ping -i путь_до_файла_inventory
@@ -18,6 +27,12 @@ target1 | SUCCESS => {
 
 sudo vi /etc/ansible/ansible.cfg - заходим в файл конфига
 host_key_checking = False - в данном файле раскоментируем эту строку, чтобы не выдавало сообщение о обязательном фмнгерпринте
+
+Лучше создать файл ansible.cfg прямо в папке проекта и он будет смотреть сначала его.
+Там прописывае:
+[defaults]
+host_key_checking = False
+inventory         = путь_до_файла_inventory
 
         inventory
 
@@ -55,7 +70,7 @@ ansible_port:22/1234
 ansible_user:root
 ansible_ssh_pass:/ansible_password:
 ansible_host= - используется для указания полного доменного имени (FQDN) 
-ansible_ssh_private_key_file=/root/.ssh/id_rsa.pub - при указании данной переменной надо изменить разрешения для папки .ssh и ее содержимого командами
+ansible_ssh_private_key_file=/root/.ssh/id_rsa - при указании данной переменной надо изменить разрешения для папки .ssh и ее содержимого командами
     chmod 700 .ssh/
     chmod 600 .ssh/* и это не поможет все равно, будет ошибка
 
