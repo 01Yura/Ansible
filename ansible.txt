@@ -1,0 +1,130 @@
+https://ansible-for-network-engineers.readthedocs.io/ru/latest/index.html
+
+yum install epel-release
+yum install ansible
+cat > inventory
+target1 ansible_host=192.168.0.160 ansible_ssh_pass=toor - ip и пароль рута хоста-цели
+
+ansible target1 -m ping -i путь_до_файла_inventory
+
+target1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+
+sudo vi /etc/ansible/ansible.cfg - заходим в файл конфига
+host_key_checking = False - в данном файле раскоментируем эту строку, чтобы не выдавало сообщение о обязательном фмнгерпринте
+
+        inventory
+
+Файл можно создать в любом месте под любым названием, при запуске, если вы не в той же папке что и файл, нужно указать его местоположение после ключа -i
+По умолчанию ансибл ищет все в файле /etc/ansible/hosts
+
+
+Можно создать группу в кв скобках, чтобы управлять хостами сразу:
+[mail]
+serve1.domain.com
+serve2.domain.com
+
+[db]
+serve3.domain.com
+serve4.domain.com
+
+[app]
+serve5.domain.com
+serve6.domain.com
+
+Все хосты по умолчанию входят в группу all
+
+Группы можно обьединять в большие группы:
+[название_общей_группы:children]
+название_группы_1
+название_группы_2
+
+Можно создать alias:
+app ansible_host=server1.domain.com
+В данном примере app - это псевдоним
+
+Параметры inventory:
+ansible_connection:ssh/winrm/local/docker
+ansible_port:22/1234
+ansible_user:root
+ansible_ssh_pass:/ansible_password:
+ansible_host= - используется для указания полного доменного имени (FQDN) 
+ansible_ssh_private_key_file=/root/.ssh/id_rsa.pub - при указании данной переменной надо изменить разрешения для папки .ssh и ее содержимого командами
+    chmod 700 .ssh/
+    chmod 600 .ssh/* и это не поможет все равно, будет ошибка
+
+ВНИМАНИЕ! При отсутствии указания как подключатся (по паролю или по ключу) по умолчанию ансибл подключается по ключу
+
+
+
+Пример:
+app ansible_host=server1.domain.com ansible_connection=ssh ansible_user=root ansible_ssh_pass=yura
+
+ansible all -m shell -a "uptime" -i /root/project/inventory - выполнить команду uptime
+ansible all -m command -a "uptime" -i /root/project/inventory - то же
+
+ansible target2 -m file -a "path=/root/file.txt state=touch" -i /root/project/inventory -b
+target2 | FAILED! => {
+    "msg": "Missing sudo password"
+Надо добавить пользователя в sudoers и убрать пароль командой visudo
+yura    ALL=(ALL)       NOPASSWD: ALL
+или
+%wheel  ALL=(ALL)       NOPASSWD: ALL (эта строка была заккоментирована по умолчанию)
+
+ansible target2 -m copy -a "src=/home/file123 dest=/home mode=444" -i /root/project/inventory -b - копировать файл и установить ему права 444
+
+
+      
+      
+      
+      
+      
+            WINDOWS
+
+Открываем power shell от админа
+
+winrm enumerate winrm/config/Listener - посмотреть текущие listenerы которые работают
+
+winrm get  winrm/config - смотрим конфиг winrm
+
+set-item WSMan:\localhost\Service\AllowUnencrypted $True - меняем значение переменной в конфиге 
+
+В свойствах сети профиль дожен стоять - private
+
+файл inventory
+wintar1 ansible_host=192.168.0.169 ansible_password=yura ansible_user=yura ansible_connection=winrm ansible_winrm_server_cert_validation=ignore
+
+ansible wintar1 -m win_ping -i inventory - проверяем связь
+
+                    GROUP_VARS
+Создать папку group_vars с файлами называющимися как группы
+И в эти файлы прописать все данные группы которые не меняются:
+Создаем файл group_vars/app
+ansible_user: root
+ansible_ssh_pass: toor
+Таким образом все хосты из группы app будут подключаться как root с паролем toor
+Это будет работать если запускать ansible из папки в которой расположена папка group_vars
+
+ansible all -m debug -a "var=ansible_host" -i /root/project/inventory - команда чтобы посмотреть какую-либо переменную, в данном случае ip address
+
+                    PLAYBOOKS
+
+Создаем файл ping.yml
+- name: Ping Servers
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Task Ping
+    ping:
+
+ansible-playbook -i inventory ping.yml - запускаем плейбук
+
+121213
+
