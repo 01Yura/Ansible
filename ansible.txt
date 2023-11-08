@@ -101,8 +101,13 @@ ansible target2 -m copy -a "src=/home/file123 dest=/home mode=444" -i /root/proj
       
       
             WINDOWS
+выполняем команду в PowerShell от админа
+Set-ExecutionPolicy Unrestricted 
+Можно (но не обязательно) скачать и выполнить скрипт на обновление PowerShell 
+https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1
+
 Скачиваем скрипт https://github.com/AlbanAndrieu/ansible-windows/blob/master/files/ConfigureRemotingForAnsible.ps1
-Открываем power shell от админа и запускаем скрипт
+Открываем power shell от админа и запускаем данный скрипт, он установит и настроет winrm
 
 В свойствах сети профиль дожен стоять - private
 
@@ -117,6 +122,18 @@ pip install pywinrm
 wintar1 ansible_host=192.168.0.169 ansible_password=yura ansible_user=yura ansible_connection=winrm ansible_winrm_server_cert_validation=ignore
 
 ansible wintar1 -m win_ping -i inventory - проверяем связь
+
+Пример плейбука для винды:
+---
+
+- hosts: all
+
+  tasks:
+   - name: run an executable using win_command
+     win_command: whoami.exe
+   - name: run a cmd command
+     win_command: cmd.exe /c mkdir C:\test
+
 
                     GROUP_VARS
 Создать папку group_vars с файлами называющимися как группы
