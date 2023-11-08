@@ -109,6 +109,9 @@ ansible linux_servers -m service -a "name=httpd state=started enabled=yes" -b - 
  
 -vvv - при указании в конце команды дает доп инфу
 
+ansible-doc -l - показывает все модули
+
+
 ansible target2 -m file -a "path=/root/file.txt state=touch" -i /root/project/inventory -b
 target2 | FAILED! => {
     "msg": "Missing sudo password"
