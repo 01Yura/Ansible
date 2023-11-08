@@ -94,8 +94,14 @@ ansible_ssh_private_key_file=/root/.ssh/id_rsa - при указании дан�
 Пример:
 app ansible_host=server1.domain.com ansible_connection=ssh ansible_user=root ansible_ssh_pass=yura
 
+ansible-inventory --list - отобразить все хосты с переменными
+ansible-inventory --graph
+
+
+ansible linux_servers -m setup - показывает инфу о сервере
 ansible all -m shell -a "uptime" -i /root/project/inventory - выполнить команду uptime
 ansible all -m command -a "uptime" -i /root/project/inventory - то же
+ansible all -n get_url -a "url=ссылка dest=куда" - скачать с сайта
 
 ansible target2 -m file -a "path=/root/file.txt state=touch" -i /root/project/inventory -b
 target2 | FAILED! => {
