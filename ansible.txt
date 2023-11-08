@@ -102,6 +102,12 @@ ansible linux_servers -m setup - показывает инфу о сервере
 ansible all -m shell -a "uptime" -i /root/project/inventory - выполнить команду uptime
 ansible all -m command -a "uptime" -i /root/project/inventory - то же
 ansible all -n get_url -a "url=ссылка dest=куда" - скачать с сайта
+ansible linux_servers -m yum -a "name=neofetch state=installed" - установить прогу
+
+ansible linux_servers -m yum -a "name=httpd state=latest" -b - установить апачи
+ansible linux_servers -m service -a "name=httpd state=started enabled=yes" -b - включить его и запускать при старте
+ 
+-vvv - при указании в конце команды дает доп инфу
 
 ansible target2 -m file -a "path=/root/file.txt state=touch" -i /root/project/inventory -b
 target2 | FAILED! => {
