@@ -45,21 +45,23 @@ inventory         = путь_до_файла_inventory
 
 
 Можно создать группу в кв скобках, чтобы управлять хостами сразу:
-[mail]
-serve1.domain.com
-serve2.domain.com
 
-[db]
-serve3.domain.com
-serve4.domain.com
+[windows_servers]
+win10 ansible_host=192.168.0.171
+[windows_servers:vars]
+ansible_user=yura
+ansible_password=yura
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
 
-[app]
-serve5.domain.com
-serve6.domain.com
+[linux_servers]
+target1 ansible_host=192.168.0.161
+target2 ansible_host=192.168.0.158
+[linux_servers:vars]
+ansible_user=root
+ansible_password=toor
 
-[app:vars] 
-ansible_user:root
-и так далее 
 
 Все хосты по умолчанию входят в группу all
 
@@ -83,6 +85,7 @@ ansible_ssh_private_key_file=/root/.ssh/id_rsa - при указании дан�
     chmod 600 .ssh/* и это не поможет все равно, будет ошибка
 
 ВНИМАНИЕ! При отсутствии указания как подключатся (по паролю или по ключу) по умолчанию ансибл подключается по ключу
+          При подключении по логину и паролю может попросить установить программу sshpass
 
 
 
