@@ -101,16 +101,17 @@ ansible target2 -m copy -a "src=/home/file123 dest=/home mode=444" -i /root/proj
       
       
             WINDOWS
-
-Открываем power shell от админа
-
-winrm enumerate winrm/config/Listener - посмотреть текущие listenerы которые работают
-
-winrm get  winrm/config - смотрим конфиг winrm
-
-set-item WSMan:\localhost\Service\AllowUnencrypted $True - меняем значение переменной в конфиге 
+Скачиваем скрипт https://github.com/AlbanAndrieu/ansible-windows/blob/master/files/ConfigureRemotingForAnsible.ps1
+Открываем power shell от админа и запускаем скрипт
 
 В свойствах сети профиль дожен стоять - private
+
+НА линуксе должен быть установлен winrm
+apt install python3-winrm
+или 
+apt install python(3)-pip - надо установить пакетный менеджер пайтона pip указав просто питон или питон3
+pip install pywinrm
+
 
 файл inventory
 wintar1 ansible_host=192.168.0.169 ansible_password=yura ansible_user=yura ansible_connection=winrm ansible_winrm_server_cert_validation=ignore
