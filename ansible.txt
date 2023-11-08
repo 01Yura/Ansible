@@ -61,7 +61,9 @@ target2 ansible_host=192.168.0.158
 [linux_servers:vars]
 ansible_user=root
 ansible_password=toor
-
+или вместо предыдущих 2х
+ansible_ssh_private_key_file=/root/.ssh/id_rsa
+или вообще без всего
 
 Все хосты по умолчанию входят в группу all
 
