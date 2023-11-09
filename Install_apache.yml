@@ -1,0 +1,28 @@
+---
+- name: Install Apache Web Server
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install Apache
+        apt:
+          name: apache2
+          state: latest
+
+    - name: Copy website
+        copy: 
+          src: /root/index.html
+          dest: /var/www/html
+        notify: Restart Apache
+        
+    - name: Start Apache and enable autoboot
+        service:
+          name: apache2.service
+          state: started
+          enabled: yes
+
+  handlers:
+    - name: Restart Apache
+      service:
+        name: apache2.service
+        state: restarted                
