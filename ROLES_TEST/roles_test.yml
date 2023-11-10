@@ -1,6 +1,6 @@
 ---
 - name: Install Apache Web Server
-  hosts: linux_servers
+  hosts: "{{ MYHOST }}"
   become: yes
 
   roles:
