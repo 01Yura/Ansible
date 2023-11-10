@@ -1,0 +1,11 @@
+[windows_servers]
+win10 ansible_host=192.168.0.171
+
+[linux_servers]
+target1 ansible_host=192.168.0.161
+target2 ansible_host=192.168.0.158
+target3 ansible_host=192.168.0.247
+[linux_servers:vars]
+#ansible_user=root
+#ansible_password=toor
+ansible_ssh_private_key_file=/root/.ssh/id_rsa
