@@ -188,7 +188,35 @@ ansible all -m debug -a "var=ansible_host" -i /root/project/inventory - кома
 ansible-playbook -i inventory ping.yml - запускаем плейбук
 
 
-          БЛОКИ И УСЛОВИЯ
+         TEMPLATE
 
+Надо создать файл с расширением .j2, он и будет шаблоном. В нем помимо содеожания должны быть переменные, которые будут заменены на значение данной переменной для каждого сервера при установке.
+
+Вот блок:
+
+vars:
+    src_folder: ./mywebsite 
+    dest_folder: /var/www/html
+
+#ДАННЫЙ БЛОК 
+- name: Copy template 
+      template: src={{src_folder}}/index.j2 dest={{ dest_folder }}/index.html
+      notify:
+        - Restart Apache Centos
+        - Restart Apache Debian
+
+handlers:
+
+    - name: Restart Apache Centos
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_os_family=="RedHat"
+
+    - name: Restart Apache Debian
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family=="Debian"
           
 
