@@ -1,0 +1,24 @@
+---
+- name: Create user
+  hosts: linux_servers
+  become: yes
+
+  tasks:
+
+    - name: Create group
+      group:
+        name: "{{item}}"
+        state: present
+      loop:
+        - test
+        - dev
+    - name: Create user
+        user: 
+          name: "{{item.clientname}}"
+          shell: /bin/bash
+          groups: test, dev
+          append: yes
+          home: "home/{{item.homedir}}"
+        with_items:
+          - {clientname: client1, homedir: client1}
+          - {clientname: client2, homedir: client2}
