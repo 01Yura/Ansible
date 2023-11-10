@@ -1,2 +1,45 @@
 ---
-# tasks file for deploy_apache_web
+- block: #====== Block for RedHat ======
+    - name: Install Apache for RedHat
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Start Apache and enable autoboot (RedHat)
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+    - name: Open port 80 ans restart firewall
+      shell: firewall-cmd --permanent --add-service=http && firewall-cmd --reload
+
+  when: ansible_os_family=="RedHat"
+
+- block: #====== Block for Debian======
+    - name: Install Apache for Ubuntu
+      apt:
+        name: apache2
+        state: latest
+
+    - name: Start Apache and enable autoboot (Ubuntu)
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+  when: ansible_os_family=="Debian"
+
+- name: Copy template
+  template: src=index.j2 dest={{ dest_folder }}/index.html
+  notify:
+    - Restart Apache Centos
+    - Restart Apache Debian
+
+- name: Copy website
+  copy: src={{item}} dest={{ dest_folder }}
+  loop:
+    - image.img
+  notify:
+    - Restart Apache Centos
+    - Restart Apache Debian

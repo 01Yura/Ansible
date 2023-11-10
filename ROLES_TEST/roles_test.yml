@@ -1,0 +1,7 @@
+---
+- name: Install Apache Web Server
+  hosts: linux_servers
+  become: yes
+
+  roles:
+    - { role: deploy_apache_web, when: ansble_system == "Linux" }

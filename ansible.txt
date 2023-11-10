@@ -220,3 +220,9 @@ handlers:
       when: ansible_os_family=="Debian"
           
 
+      ROLES
+
+Создаем директорию roles
+Заходим в нее и делаем команду:
+ ansible-galaxy init название_роли
+Создается папка с подпапками, куда и надо все рапихать
