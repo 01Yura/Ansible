@@ -1,0 +1,22 @@
+---
+- name: Loop
+  hosts: target3
+  become: yes
+
+  tasks:
+    
+    - name: Hello loop
+      debug:
+        msg: "Hello {{ item }}"
+      loop:
+        - "Vasia"
+        - "Kolia"
+        - "Petia"
+        - "Masha"
+
+    - name: Loop Until example
+      shell: echo -n W >> newfile.txt && cat newfile.txt
+      register: output                            # Результат записываю в output
+      delay: 3                                    # Задержка между выполнением команд 3 сек.
+      retries: 10                                 # Сколько раз повторить (по дефолту 3 раза).
+      until: output.stdout.find("WWWWW") == false # Продолжает запускать команду пока в файле не будет WWWWW.

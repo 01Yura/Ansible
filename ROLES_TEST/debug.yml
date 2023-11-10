@@ -1,0 +1,34 @@
+---
+- name: Checking module debug
+  hosts: linux_servers
+  become: yes
+
+  vars:
+    message1: Hello
+    message2: World
+
+  tasks:
+
+    - name: Print var 1
+      debug:
+        var: message1
+
+    - name: MSG
+      debug:
+        msg: Pervoe slovo {{ message1 }}
+
+    - name: Print hosts
+      debug: var=ansible_host
+      
+    - set_fact: full_message="{{ message1 }} {{ message2 }}"
+
+    - debug: var=full_message 
+
+    - debug:
+        var: ansible_distribution
+
+    - shell: uptime
+      register: result
+
+    - debug:
+        var: result.stdout

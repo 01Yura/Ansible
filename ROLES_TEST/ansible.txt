@@ -1,0 +1,222 @@
+https://ansible-for-network-engineers.readthedocs.io/ru/latest/index.html
+
+Установка на RHEL дистрибутивы
+yum install epel-release
+yum install ansible
+
+Установка на Ubuntu
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo add-apt-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+
+cat > inventory - не обязательно создавать Inventory-файл, так как по умолчанию он храится в /etc/ansible/hosts
+
+target1 ansible_host=192.168.0.160 ansible_ssh_pass=toor - ip и пароль рута хоста-цели
+
+ansible target1 -m ping -i путь_до_файла_inventory
+
+target1 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+
+
+sudo vi /etc/ansible/ansible.cfg - заходим в файл конфига
+host_key_checking = False - в данном файле раскоментируем эту строку, чтобы не выдавало сообщение о обязательном фмнгерпринте
+
+Лучше создать файл ansible.cfg прямо в папке проекта и он будет смотреть сначала его.
+Там прописывае:
+[defaults]
+host_key_checking = False
+inventory         = путь_до_файла_inventory
+ 
+        
+        
+        
+        
+        INVENTORY
+
+Файл можно создать в любом месте под любым названием, при запуске, если вы не в той же папке что и файл, нужно указать его местоположение после ключа -i
+По умолчанию ансибл ищет все в файле /etc/ansible/hosts
+
+
+Можно создать группу в кв скобках, чтобы управлять хостами сразу:
+
+[windows_servers]
+win10 ansible_host=192.168.0.171
+[windows_servers:vars]
+ansible_user=yura
+ansible_password=yura
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
+
+[linux_servers]
+target1 ansible_host=192.168.0.161
+target2 ansible_host=192.168.0.158
+[linux_servers:vars]
+ansible_user=root
+ansible_password=toor
+или вместо предыдущих 2х
+ansible_ssh_private_key_file=/root/.ssh/id_rsa
+или вообще без всего
+
+Все хосты по умолчанию входят в группу all
+
+Группы можно обьединять в большие группы:
+[название_общей_группы:children]
+название_группы_1
+название_группы_2
+
+Можно создать alias:
+app ansible_host=server1.domain.com
+В данном примере app - это псевдоним
+
+Параметры inventory:
+ansible_connection:ssh/winrm/local/docker
+ansible_port:22/1234
+ansible_user:root
+ansible_ssh_pass:/ansible_password:
+ansible_host= - используется для указания полного доменного имени (FQDN) 
+ansible_ssh_private_key_file=/root/.ssh/id_rsa - при указании данной переменной надо изменить разрешения для папки .ssh и ее содержимого командами
+    chmod 700 .ssh/
+    chmod 600 .ssh/* и это не поможет все равно, будет ошибка
+
+ВНИМАНИЕ! При отсутствии указания как подключатся (по паролю или по ключу) по умолчанию ансибл подключается по ключу
+          При подключении по логину и паролю может попросить установить программу sshpass
+
+
+
+Пример:
+app ansible_host=server1.domain.com ansible_connection=ssh ansible_user=root ansible_ssh_pass=yura
+
+ansible-inventory --list - отобразить все хосты с переменными
+ansible-inventory --graph
+
+
+ansible linux_servers -m setup - показывает инфу о сервере
+ansible all -m shell -a "uptime" -i /root/project/inventory - выполнить команду uptime
+ansible all -m command -a "uptime" -i /root/project/inventory - то же
+ansible all -n get_url -a "url=ссылка dest=куда" - скачать с сайта
+ansible linux_servers -m yum -a "name=neofetch state=installed" - установить прогу
+
+ansible linux_servers -m yum -a "name=httpd state=latest" -b - установить апачи
+ansible linux_servers -m service -a "name=httpd state=started enabled=yes" -b - включить его и запускать при старте
+ 
+-vvv - при указании в конце команды дает доп инфу
+
+ansible-doc -l - показывает все модули
+
+
+ansible target2 -m file -a "path=/root/file.txt state=touch" -i /root/project/inventory -b
+target2 | FAILED! => {
+    "msg": "Missing sudo password"
+Надо добавить пользователя в sudoers и убрать пароль командой visudo
+yura    ALL=(ALL)       NOPASSWD: ALL
+или
+%wheel  ALL=(ALL)       NOPASSWD: ALL (эта строка была заккоментирована по умолчанию)
+
+ansible target2 -m copy -a "src=/home/file123 dest=/home mode=444" -i /root/project/inventory -b - копировать файл и установить ему права 444
+
+
+      
+      
+      
+      
+      
+            WINDOWS
+выполняем команду в PowerShell от админа
+Set-ExecutionPolicy Unrestricted 
+Можно (но не обязательно) скачать и выполнить скрипт на обновление PowerShell 
+https://github.com/jborean93/ansible-windows/blob/master/scripts/Upgrade-PowerShell.ps1
+
+Скачиваем скрипт https://github.com/AlbanAndrieu/ansible-windows/blob/master/files/ConfigureRemotingForAnsible.ps1
+Открываем power shell от админа и запускаем данный скрипт, он установит и настроет winrm
+
+В свойствах сети профиль дожен стоять - private
+
+НА линуксе должен быть установлен winrm
+apt install python3-winrm
+или 
+apt install python(3)-pip - надо установить пакетный менеджер пайтона pip указав просто питон или питон3
+pip install pywinrm
+
+
+файл inventory
+wintar1 ansible_host=192.168.0.169 ansible_password=yura ansible_user=yura ansible_connection=winrm ansible_winrm_server_cert_validation=ignore
+
+ansible wintar1 -m win_ping -i inventory - проверяем связь
+
+Пример плейбука для винды:
+---
+
+- hosts: all
+
+  tasks:
+   - name: run an executable using win_command
+     win_command: whoami.exe
+   - name: run a cmd command
+     win_command: cmd.exe /c mkdir C:\test
+
+
+                    GROUP_VARS
+Создать папку group_vars с файлами называющимися как группы
+И в эти файлы прописать все данные группы которые не меняются:
+Создаем файл group_vars/app
+ansible_user: root
+ansible_ssh_pass: toor
+Таким образом все хосты из группы app будут подключаться как root с паролем toor
+Это будет работать если запускать ansible из папки в которой расположена папка group_vars
+
+ansible all -m debug -a "var=ansible_host" -i /root/project/inventory - команда чтобы посмотреть какую-либо переменную, в данном случае ip address
+
+                    PLAYBOOKS
+
+Создаем файл ping.yml
+- name: Ping Servers
+  hosts: all
+  become: yes
+
+  tasks:
+  - name: Task Ping
+    ping:
+
+ansible-playbook -i inventory ping.yml - запускаем плейбук
+
+
+         TEMPLATE
+
+Надо создать файл с расширением .j2, он и будет шаблоном. В нем помимо содеожания должны быть переменные, которые будут заменены на значение данной переменной для каждого сервера при установке.
+
+Вот блок:
+
+vars:
+    src_folder: ./mywebsite 
+    dest_folder: /var/www/html
+
+#ДАННЫЙ БЛОК 
+- name: Copy template 
+      template: src={{src_folder}}/index.j2 dest={{ dest_folder }}/index.html
+      notify:
+        - Restart Apache Centos
+        - Restart Apache Debian
+
+handlers:
+
+    - name: Restart Apache Centos
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_os_family=="RedHat"
+
+    - name: Restart Apache Debian
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family=="Debian"
+          
+

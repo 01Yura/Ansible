@@ -1,0 +1,34 @@
+- name: Installing mikrotik CHR
+  hosts: target3
+  become: yes
+
+  tasks:
+    - name: Ping
+      ping:
+
+    - name: Updating repos
+      command: apt update
+
+    - name: Installing Unzip
+      command: apt install unzip -y
+
+    - name: Installing Wget
+      command: apt install wget -y
+
+    - name: Downloading CHR image
+      command: wget --inet4-only --no-check-certificate https://download.mikrotik.com/routeros/7.11.2/chr-7.11.2.img.zip
+
+    - name: Extracting img
+      command: unzip chr-7.11.2.img.zip
+
+    - name: Writing img on disk
+      command: dd if=chr-7.11.2.img of=/dev/sda bs=4M oflag=sync
+
+    - name: Rebooting 1
+      command: echo 1 > /proc/sys/kernel/sysrq
+
+    - name: Rebooting 2
+      command: echo b > /proc/sysrq-trigger
+
+    - name: Reebot
+      command: reboot

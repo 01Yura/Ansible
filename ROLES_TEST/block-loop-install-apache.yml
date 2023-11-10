@@ -1,0 +1,68 @@
+---
+- name: Install Apache Web Server
+  hosts: linux_servers
+  become: yes
+  vars:
+    src_folder: ./mywebsite 
+    dest_folder: /var/www/html
+  tasks:
+
+    - name: Print OS Family
+      debug:
+        var: ansible_os_family
+
+    - block: #====== Block for RedHat ======
+
+        - name: Install Apache for RedHat
+          yum:
+            name: httpd
+            state: latest
+
+        - name: Start Apache and enable autoboot (RedHat)
+          service:
+            name: httpd
+            state: started
+            enabled: yes
+
+        - name: Open port 80 ans restart firewall
+          shell: firewall-cmd --permanent --add-service=http && firewall-cmd --reload
+
+      when: ansible_os_family=="RedHat"
+
+    - block: #====== Block for Debian======
+ 
+        - name: Install Apache for Ubuntu
+          apt:
+            name: apache2
+            state: latest
+
+        - name: Start Apache and enable autoboot (Ubuntu)
+          service:
+            name: apache2
+            state: started
+            enabled: yes
+
+      when: ansible_os_family=="Debian"
+
+    - name: Copy website
+      copy: src={{ src_folder }}/{{ item }} dest={{ dest_folder }}
+      loop:
+        - "index.html"
+        - "image.img"
+      notify:
+        - Restart Apache Centos
+        - Restart Apache Debian
+
+  handlers:
+
+    - name: Restart Apache Centos
+      service:
+        name: httpd
+        state: restarted
+      when: ansible_os_family=="RedHat"
+
+    - name: Restart Apache Debian
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family=="Debian"
