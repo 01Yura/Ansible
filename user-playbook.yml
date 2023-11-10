@@ -13,12 +13,12 @@
         - test
         - dev
     - name: Create user
-        user: 
-          name: "{{item.clientname}}"
-          shell: /bin/bash
-          groups: test, dev
-          append: yes
-          home: "home/{{item.homedir}}"
-        with_items:
-          - {clientname: client1, homedir: client1}
-          - {clientname: client2, homedir: client2}
+      user: 
+        name: "{{item.clientname}}"
+        shell: /bin/bash
+        groups: test, dev
+        append: yes
+        home: "/home/{{item.homedir}}"
+      with_items:
+        - {clientname: client1, homedir: client1}
+        - {clientname: client2, homedir: client2}
