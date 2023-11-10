@@ -49,18 +49,19 @@
       loop:
         - "index.html"
         - "image.img"
-      notify: Restart Apache
-
+      notify:
+        - Restart Apache Centos
+        - Restart Apache Debian
 
   handlers:
 
-    - name: Restart Apache
+    - name: Restart Apache Centos
       service:
         name: httpd
         state: restarted
       when: ansible_os_family=="RedHat"
 
-    - name: Restart Apache
+    - name: Restart Apache Debian
       service:
         name: apache2
         state: restarted
