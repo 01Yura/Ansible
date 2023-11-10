@@ -5,3 +5,7 @@
 
   roles:
     - { role: deploy_apache_web, when: ansible_system == "Linux" }
+
+# Переменную MYHOST нужно засылать в маой команде на запуск плейбука
+# Она называется внешней переменной extra var
+# ansible-playbook roles_test.yml -e "MYHOST=stage"
