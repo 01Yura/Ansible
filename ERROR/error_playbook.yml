@@ -1,0 +1,25 @@
+---
+- name: Tasks
+  hosts: linux_servers
+  any_errors_fatal: true # при любой ошибке сразу завершает работу 
+  become: yes
+
+  tasks:
+
+    - name: Task1
+      yum:
+        name: tree
+        state: latest
+#      ignore_errors: yes # игнорируем и продолжаем далее даже если есть ошибка в данной таске
+
+    - name: Task2
+      shell: ls /home
+      register: result
+#      failed_when: "'client1' in result.stdout_lines"
+      failed_when: result.rc != 0  # используем return code 
+
+    - debug:
+        var: result.stdout_lines 
+
+    - name: Task2
+      shell: echo Task3
