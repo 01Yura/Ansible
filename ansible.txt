@@ -226,3 +226,23 @@ handlers:
 Заходим в нее и делаем команду:
  ansible-galaxy init название_роли
 Создается папка с подпапками, куда и надо все рапихать
+
+DELIGATES
+
+deligates_to: linux1
+
+run_once: true - команда запустится только на одном сервере (первом)
+
+SECRET 
+
+ansible-vault create mysecretfile.txt - создать зашифрованный Файл
+ansible-vault view mysecretfile - просмотреть Файл
+ansible-vault edit mysecretfile - редактировать файл
+ansible-vault rekey mysecretfile - поменять пароль
+ansible-vault encrypt playbook_encrypt.yml - зашифровать весь плейбук
+ansible-vault decrypt playbook_encrypt.yml - расшифровать весь плейбук
+ansible-playbook playbook_encrypt.yml --ask-vault-pass - запустить зашифрованный плейбук с запросом пароля 
+ansible-playbook playbook_encrypt.yml --vault-password-file файл_с_паролем
+ansible-vault encrypt_string --stdin-name "mypassword" - ввести пароль и зашифровать его в переменную mypassword, значение которой можно вставить в плейбук
+или так
+echo -n "ПАРОЛЬ"  | ansible-vault encrypt_string
