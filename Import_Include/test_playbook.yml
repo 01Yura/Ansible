@@ -1,0 +1,19 @@
+---
+- name: My playbook
+  hosts: linux_servers
+  become: yes
+
+  vars:
+    mytext: "Privet Medved"
+
+  tasks:
+
+    - name: Ping
+      ping:
+
+    - name: Create folder
+      include: create_folder.yml #можно использовать не include, а import 
+
+    - name: Create file
+      include: create_file.yml
+
