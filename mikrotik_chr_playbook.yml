@@ -1,3 +1,7 @@
+---
+# При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова
+# Например: ansible-playbook -e "version=номер_версии" microtik_chr.yml
+
 - name: Installing mikrotik CHR
   hosts: target3
   become: yes
@@ -7,19 +11,22 @@
       ping:
 
     - name: Updating repos
-      command: apt update
+      dnf:
+        update_cache: latest
 
     - name: Installing Unzip
-      command: apt install unzip -y
-
-    - name: Installing Wget
-      command: apt install wget -y
+      yum:
+        name: unzip
+        state: latest
 
     - name: Downloading CHR image
-      command: wget --inet4-only --no-check-certificate https://download.mikrotik.com/routeros/7.11.2/chr-7.11.2.img.zip
+      get_url:
+        url: https://download.mikrotik.com/routeros/7.11.2/chr-7.11.2.img.zip
 
     - name: Extracting img
-      command: unzip chr-7.11.2.img.zip
+      unarchive:
+        src: unzip chr-7.11.2.img.zip
+        dest: ./
 
     - name: Writing img on disk
       command: dd if=chr-7.11.2.img of=/dev/sda bs=4M oflag=sync
