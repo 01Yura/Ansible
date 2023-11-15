@@ -1,9 +1,10 @@
 ---
-# При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова
-# Например: ansible-playbook -e "version=номер_версии" microtik_chr.yml
+# При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова (-e "version=Номер_версии_CHR"
+# Например: ansible-playbook -e "version=7.11.2" microtik_chr.yml
+# В inventory файле hosts нужно добавить группу [target_host] с IP целевого хоста
 
 - name: Installing mikrotik CHR
-  hosts: target3
+  hosts: target_host
   become: yes
 
   tasks:
@@ -11,8 +12,8 @@
       ping:
 
     - name: Updating repos
-      dnf:
-        update_cache: latest
+      yum:
+        update_cache: yes
 
     - name: Installing Unzip
       yum:
@@ -21,15 +22,17 @@
 
     - name: Downloading CHR image
       get_url:
-        url: https://download.mikrotik.com/routeros/7.11.2/chr-7.11.2.img.zip
+        url: https://download.mikrotik.com/routeros/{{version}}/chr-{{version}}.img.zip
+        dest: ./
 
     - name: Extracting img
       unarchive:
-        src: unzip chr-7.11.2.img.zip
+        remote_src: yes
+        src: chr-{{version}}.img.zip
         dest: ./
 
     - name: Writing img on disk
-      command: dd if=chr-7.11.2.img of=/dev/sda bs=4M oflag=sync
+      command: dd if=chr-{{version}}.img of=/dev/sda bs=4M oflag=sync
 
     - name: Rebooting 1
       command: echo 1 > /proc/sys/kernel/sysrq
@@ -37,5 +40,5 @@
     - name: Rebooting 2
       command: echo b > /proc/sysrq-trigger
 
-    - name: Reebot
-      command: reboot
+    - name: Rebooting 3
+      command: shutdown -r -t 10
