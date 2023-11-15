@@ -1,5 +1,5 @@
 ---
-# При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова (-e "version=Номер_версии_CHR"
+# При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова (-e "version=Номер_версии_CHR")
 # Например: ansible-playbook -e "version=7.11.2" microtik_chr.yml
 # В inventory файле hosts нужно добавить группу [target_host] с IP целевого хоста
 
@@ -10,6 +10,15 @@
   tasks:
     - name: Ping
       ping:
+
+    - name: Print OS Family
+      debug:
+        var: ansible_os_family
+
+    - name: Updating repos
+      yum:
+        update_cache: yes
+      when: ansible_os_family=="RedHat"
 
     - name: Updating repos
       yum:

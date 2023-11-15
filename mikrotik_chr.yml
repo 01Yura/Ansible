@@ -6,6 +6,10 @@
     - name: Ping
       ping:
 
+    - name: Print OS Family
+      debug:
+        var: ansible_os_family
+
     - name: Updating repos
       command: apt update
 
