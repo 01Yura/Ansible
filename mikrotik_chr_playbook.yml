@@ -58,4 +58,4 @@
       command: echo b > /proc/sysrq-trigger
 
     - name: Rebooting 3
-      command: shutdown -r 1
+      command: shutdown -r 1 -t 2
