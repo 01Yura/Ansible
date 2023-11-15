@@ -15,14 +15,15 @@
       debug:
         var: ansible_os_family
 
-    - name: Updating repos
+    - name: Updating repos for CentOS
       yum:
         update_cache: yes
       when: ansible_os_family=="RedHat"
 
-    - name: Updating repos
-      yum:
+    - name: Updating repos for Ubuntu
+      apt:
         update_cache: yes
+      when: ansible_os_family=="Debian"
 
     - name: Installing Unzip
       yum:
