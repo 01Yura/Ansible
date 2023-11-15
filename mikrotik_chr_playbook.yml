@@ -25,10 +25,17 @@
         update_cache: yes
       when: ansible_os_family=="Debian"
 
-    - name: Installing Unzip
+    - name: Installing Unzip for CentOS
       yum:
         name: unzip
         state: latest
+      when: ansible_os_family=="RedHat"
+
+    - name: Installing Unzip for Ubuntu
+      apt:
+        name: unzip
+        state: latest
+      when: ansible_os_family=="Debian"
 
     - name: Downloading CHR image
       get_url:
