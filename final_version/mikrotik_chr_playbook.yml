@@ -2,6 +2,11 @@
 # При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова (-e "version=Номер_версии_CHR")
 # Например: ansible-playbook -e "version=7.11.2" microtik_chr.yml
 # В inventory файле hosts нужно добавить группу [target_host] с IP адресом хоста, на который вы устанавливаете CHR
+# В команде запуска плейбука не забудьте добавить опцию -i и путь до файла hosts, созданного на предыдущем шаге, и добавить опцию -k, которая запросит пароль для рута удаленного хоста при запуске плейбука
+# В итоге команда должна выглядеть так (если подключение по логину и паролю):
+# ansible-playbook -e "version=7.11.2" -i hosts -k mikrotik_chr_playbook.yml
+# или так (если подключение по ssh-ключу)
+# ansible-playbook -e "version=7.11.2" -i hosts mikrotik_chr_playbook.yml
 
 - name: Installing mikrotik CHR
   hosts: target_host
