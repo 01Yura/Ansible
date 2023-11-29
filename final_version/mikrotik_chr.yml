@@ -1,3 +1,7 @@
+---
+# Так называемая Башсибл (тупо команды bash) версия плейбука для установки CHR на Ubuntu
+
+
 - name: Installing mikrotik CHR
   hosts: target1
   become: yes
