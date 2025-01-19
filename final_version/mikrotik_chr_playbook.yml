@@ -1,6 +1,6 @@
 ---
 # При запуске плейбука необходимо указать переменную необходимой вам версии Mikrotik CHR путем добавления значения (номера версии) переменной в команду вызова (-e "version=Номер_версии_CHR")
-# Например: ansible-playbook -e "version=7.11.2" microtik_chr.yml
+# Например: ansible-playbook -e "version=7.11.2" mikrotik_chr_playbook.yml
 # В inventory файле hosts нужно добавить группу [target_host] с IP адресом хоста, на который вы устанавливаете CHR
 # В команде запуска плейбука не забудьте добавить опцию -i и путь до файла hosts, созданного на предыдущем шаге, и добавить опцию -k, которая запросит пароль для рута удаленного хоста при запуске плейбука
 # В итоге команда должна выглядеть так (если подключение по логину и паролю):
@@ -20,27 +20,27 @@
       debug:
         var: ansible_os_family
 
-    - name: Updating repos for CentOS
-      yum:
-        update_cache: yes
-      when: ansible_os_family=="RedHat"
+    # - name: Updating repos for CentOS
+    #   yum:
+    #     update_cache: yes
+    #   when: ansible_os_family=="RedHat"
 
-    - name: Updating repos for Ubuntu
-      apt:
-        update_cache: yes
-      when: ansible_os_family=="Debian"
+    # - name: Updating repos for Ubuntu
+    #   apt:
+    #     update_cache: yes
+    #   when: ansible_os_family=="Debian"
 
-    - name: Installing Unzip for CentOS
-      yum:
-        name: unzip
-        state: latest
-      when: ansible_os_family=="RedHat"
+    # - name: Installing Unzip for CentOS
+    #   yum:
+    #     name: unzip
+    #     state: latest
+    #   when: ansible_os_family=="RedHat"
 
-    - name: Installing Unzip for Ubuntu
-      apt:
-        name: unzip
-        state: latest
-      when: ansible_os_family=="Debian"
+    # - name: Installing Unzip for Ubuntu
+    #   apt:
+    #     name: unzip
+    #     state: latest
+    #   when: ansible_os_family=="Debian"
 
     - name: Downloading CHR image
       get_url:
