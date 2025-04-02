@@ -1,7 +1,6 @@
 ---
 # Так называемая Башсибл (тупо команды bash) версия плейбука для установки CHR на Ubuntu
 
-
 - name: Installing mikrotik CHR
   hosts: target1
   become: yes
@@ -24,13 +23,13 @@
       command: apt install wget -y
 
     - name: Downloading CHR image
-      command: wget --inet4-only --no-check-certificate https://download.mikrotik.com/routeros/7.11.2/chr-7.11.2.img.zip
+      command: wget --inet4-only --no-check-certificate https://download.mikrotik.com/routeros/7.18.2/chr-7.18.2.img.zip
 
     - name: Extracting img
-      command: unzip chr-7.11.2.img.zip
+      command: unzip chr-7.18.2.img.zip
 
     - name: Writing img on disk
-      command: dd if=chr-7.11.2.img of=/dev/sda bs=4M oflag=sync
+      command: dd if=chr-7.18.2.img of=/dev/sda bs=4M oflag=sync
 
     - name: Rebooting 1
       command: echo 1 > /proc/sys/kernel/sysrq
